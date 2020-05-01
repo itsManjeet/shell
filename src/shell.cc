@@ -1,52 +1,8 @@
-#include <iostream>
-#include <string>
-#include <releax.hh>
-#include <vector>
-#include <sstream>
-#include <map>
-#include <memory>
-
-#include <pwd.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
-
-enum GROUND {
-    BACK = 48,
-    FORE = 38,
-};
+#include <shell.hh>
+#include <stdio.h>
 
 using namespace std;
 
-class Shell {
-
-    int status;
-    int commandStatus = 0;
-    int lastcolor = 32;
-
-    string readCMD(string);
-    
-    string getCWD();
-    string genColorCode(int,GROUND);
-    string genBlock(int color, string line, int col = 1);
-    string resetColor() {
-        return "\u001b[0m";
-    }
-
-public:
-    void loop();
-
-    int changeDir(vector<string>);
-
-    vector<string> getInput();
-    string genPrompt();
-    int execute(vector<string>);
-
-    void promptError(string);
-    
-};
 
 string
 Shell::getCWD()
@@ -136,14 +92,19 @@ vector<string>
 Shell::getInput()
 {
     vector<string> args;
-    string line, l;
-    getline(cin, line);
-    stringstream ss(line);
-    while(ss >> l) {
-        args.push_back(l);
-    }
+    string line;
 
-    return args;
+    char c;
+
+    do {
+        c = getchar();
+        switch (c) {
+            case ' '    :   args.push_back(line); line.clear();   break;
+            case '\n'   :   args.push_back(line); return args;
+            default:        line += c; break;
+        }
+
+    } while(1);
 }
 
 void
@@ -153,13 +114,18 @@ Shell::loop()
         cout << this->genPrompt();  
         auto args = this->getInput();
 
-        if (args.at(0) == "cd") {
-            status = changeDir(args);
-        } else if (args.at(0) == "exit") {
-            status = 0;
+        if (args.size() == 0) {
+            status = 1;
         } else {
-            status = this->execute(args);
+            if (args.at(0) == "cd") {
+                status = changeDir(args);
+            } else if (args.at(0) == "exit") {
+                status = 0;
+            } else {
+                status = this->execute(args);
+            }
         }
+        
 
     } while(status);
 }
@@ -211,13 +177,4 @@ Shell::execute(vector<string> args)
     }
 
     return 1;
-}
-
-int
-main(int ac, char** av)
-{
-    Shell shell;
-    shell.loop();
-
-    return 0;
 }
