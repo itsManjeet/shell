@@ -115,7 +115,13 @@ Shell::genPrompt()
 
     string block = this->genBlock(32, username, 0);
     if (filesys::exist("./.git")) {
-        block += this->genBlock(45, this->readCMD("/usr/libexec/git-core/git-show-branch"));
+        string output = this->readCMD("/usr/libexec/git-core/git-show-branch");
+        stringstream ss(output);
+        string branch;
+        ss >> branch;
+        branch = branch.substr(1, branch.length() - 2);
+
+        block += this->genBlock(46, " " + branch);
     }
 
     if (commandStatus != 0) {
