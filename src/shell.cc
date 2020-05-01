@@ -121,7 +121,7 @@ Shell::genPrompt()
         ss >> branch;
         branch = branch.substr(1, branch.length() - 2);
 
-        block += this->genBlock(46, " " + branch);
+        block += this->genBlock(25, " " + branch);
     }
 
     if (commandStatus != 0) {
