@@ -2,12 +2,25 @@
 
 using namespace std;
 
+int main_func(releax::cli &app) {
+    Shell shell;
+    shell.loop();
+    
+    return 0;
+}
 
 int
 main(int ac, char** av)
 {
-    Shell shell;
-    shell.loop();
+    releax::cli app;
 
-    return 0;
+    app.name("shell")
+       .version(0.1)
+       .release('a')
+       .description("releax shell")
+       .author("Manjeet Singh", "itsmanjeet@releax.in","-")
+       .main(main_func);
+
+    return app.execute(ac, av);
+
 }

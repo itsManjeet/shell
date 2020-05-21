@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include <releax.hh>
+#include <releax>
 #include <vector>
 #include <sstream>
 #include <map>
@@ -32,7 +32,7 @@ class Shell {
     
     std::string getCWD();
     std::string genColorCode(int,GROUND);
-    std::string genBlock(int color, std::string line, int col = 1);
+    std::string genBlock(int color, std::string line, int col = 1, bool light = false);
     std::string resetColor() {
         return "\u001b[0m";
     }
@@ -40,9 +40,9 @@ class Shell {
     void autoComplete(std::vector<std::string>);
 
 public:
-    Shell();
+    // Shell();
 
-    virtual ~Shell();
+    // virtual ~Shell();
 
     void loop();
 

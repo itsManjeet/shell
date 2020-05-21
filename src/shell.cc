@@ -31,17 +31,22 @@ Shell::readCMD(string cmd) {
 }
 
 string
-Shell::genBlock(int color, string line, int col)
+Shell::genBlock(int color, string line, int col, bool light)
 {
+    if (light) {
+        line = genColorCode(0, FORE) + line + resetColor();
+    } else {
+        line = genColorCode(255, FORE) + line + resetColor();
+    }
     string block;
     if (col == 0) {
-        block = genColorCode(color,BACK) + " " + line + " " + resetColor();
+        block = genColorCode(color,BACK) + line + resetColor();
     }
     else if (col == 2) {
         block = genBlock(color, line) + genColorCode(color, FORE) + "" + resetColor();
     }
     else {
-        block = genColorCode(lastcolor,FORE) + genColorCode(color, BACK) + " " + resetColor() + genColorCode(color, BACK) + line +  " " + resetColor();
+        block = genColorCode(lastcolor,FORE) + genColorCode(color, BACK) + " " + resetColor() + genColorCode(color, BACK) + line +  resetColor();
     }
     lastcolor = color;
     return block;
@@ -70,7 +75,7 @@ Shell::genPrompt()
     }
 
     string block = this->genBlock(32, username, 0);
-    if (filesys::exist("./.git")) {
+    if (releax::is_exist("./.git")) {
         string output = this->readCMD("/usr/libexec/git-core/git-show-branch");
         stringstream ss(output);
         string branch;
@@ -134,7 +139,7 @@ Shell::loop()
 int
 Shell::changeDir(vector<string> args)
 {
-    if (args.size() >= 1) {
+    if (args.size() <= 1) {
         promptError("expected dir name");
     } else {
         if (chdir(args.at(1).c_str()) != 0) {
